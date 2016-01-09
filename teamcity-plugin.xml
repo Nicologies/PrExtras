@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
+  <info>
+      <name>prbranch</name>
+    <display-name>pull request to branch name</display-name>
+    <version>@Version@</version>
+    <description>Plugin description</description>
+    <download-url>Plugin download URL</download-url>
+    <email>nicologies@gmail.com</email>
+    <vendor>
+      <name>Nicologies</name>
+      <url>http://nicologies.tk</url>
+      <logo>Plugin vendor logo URL</logo>
+    </vendor>
+  </info>
+  <deployment use-separate-classloader="true" />
+</teamcity-plugin>
