@@ -7,4 +7,5 @@ public class SettingsKeys {
     public final static String Password= "prbranch.password";
     public final static String GithubUserName = "prbranch.github_username";
     public final static String GithubPassword = "prbranch.github_password";
+    public final static String AppendToBuildNum = "prbranch.append_to_build_num";
 }

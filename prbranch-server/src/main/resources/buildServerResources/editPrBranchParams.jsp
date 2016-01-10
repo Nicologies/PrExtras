@@ -59,14 +59,15 @@
   <tr id="usernameAuthSection" ${hideAuthByUsername}>
     <th><label for="${settings.githubUsername}">Github Username: </label></th>
     <td>
-      <props:textProperty name="${settings.githubUsername}"/>
+      <props:textProperty name="${settings.githubUsername}" className='longField'/>
       <span class="error" id="error_${settings.githubUsername}"></span>
+      <span class="smallNote">Optional for public repository</span>
     </td>
   </tr>
   <tr id="passwordAuthSection" ${hideAuthByUsername}>
     <th><label for="${settings.githubPassword}">Github Password: </label></th>
     <td>
-      <props:passwordProperty name="${settings.githubPassword}"/>
+      <props:passwordProperty name="${settings.githubPassword}" className='longField'/>
       <span class="error" id="error_${settings.githubPassword}"></span>
       <span class="smallNote">Optional for public repository</span>
     </td>
@@ -77,6 +78,14 @@
     <td><props:textProperty name="${settings.exportParamName}" className="longField"/>
       <span class="error" id="error_${settings.exportParamName}"></span>
       <span class="smallNote">Export the branch name as a teamcity configuration parameter, so you can use it later in the build process</span>
+    </td>
+  </tr>
+
+  <tr>
+    <th><label for="${settings.appendToBuildNum}">Append the branch name to the build num label</label></th>
+    <td>
+      <props:checkboxProperty name="${settings.appendToBuildNum}"/>
+      <span class="error" id="error_${settings.appendToBuildNum}"></span>
     </td>
   </tr>
 </l:settingsGroup>

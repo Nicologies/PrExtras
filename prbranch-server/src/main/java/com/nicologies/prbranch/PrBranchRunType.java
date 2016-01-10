@@ -2,7 +2,6 @@ package com.nicologies.prbranch;
 
 import com.nicologies.prbranch.common.PrBranchConstants;
 import com.nicologies.prbranch.common.SettingsKeys;
-import jetbrains.buildServer.requirements.Requirement;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunTypeRegistry;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PrBranchRunType extends jetbrains.buildServer.serverSide.RunType{
@@ -62,6 +60,7 @@ public class PrBranchRunType extends jetbrains.buildServer.serverSide.RunType{
         parameters.put(SettingsKeys.GithubToken, "");
         parameters.put(SettingsKeys.ExportParamName, PrBranchConstants.DefaultExportParamName);
         parameters.put(SettingsKeys.AuthType, PrBranchConstants.TokenAuthType);
+        parameters.put(SettingsKeys.AppendToBuildNum, "true");
         return parameters;
     }
 }

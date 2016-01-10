@@ -40,5 +40,10 @@ public class SettingsBean {
     public String getGithubPassword(){
         return SettingsKeys.GithubPassword;
     }
+
+    @NotNull
+    public String getAppendToBuildNum(){
+        return SettingsKeys.AppendToBuildNum;
+    }
 }
 

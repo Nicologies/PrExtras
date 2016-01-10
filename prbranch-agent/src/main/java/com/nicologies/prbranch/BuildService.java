@@ -26,7 +26,9 @@ public class BuildService extends BuildServiceAdapter {
     public void beforeProcessStarted() throws RunBuildException {
         getLogger().progressMessage("Running PrBranch");
         Map<String,String> runnerParams = getRunnerParameters();
-        _isOnWindows = getConfigParameters().get("teamcity.agent.jvm.os.name").toLowerCase().startsWith("win");
+        Map<String,String> configParams = getConfigParameters();
+
+        _isOnWindows = configParams.get("teamcity.agent.jvm.os.name").toLowerCase().startsWith("win");
 
         try {
             String paramName = runnerParams.get(SettingsKeys.ExportParamName);
@@ -35,20 +37,30 @@ public class BuildService extends BuildServiceAdapter {
                 getLogger().error(msg);
                 throw new RunBuildException(msg);
             }
-            String pullReq = getConfigParameters().get("teamcity.build.branch");
+            String pullReq = configParams.get("teamcity.build.branch");
             String branchName = getBranchName(pullReq);
             if(!StringUtil.isEmptyOrSpaces(paramName)) {
                 getBuild().addSharedConfigParameter(paramName, branchName);
             }
 
-            String buildNum = getConfigParameters().get("build.number") + "-" + branchName;
-            String param = "##teamcity[buildNumber " + "'"+ buildNum +"']";
-            getLogger().message(param);
+            String appendToBuildNum = runnerParams.get(SettingsKeys.AppendToBuildNum);
+            if(!StringUtil.isEmptyOrSpaces(appendToBuildNum)
+                    && appendToBuildNum.toLowerCase().equals("true")) {
+                String buildNum = getConfigParameters().get("build.number") + "-" + branchName;
+                buildNum = ShortenBuildNumCreatedByGitVersion(buildNum);
+                String param = "##teamcity[buildNumber " + "'" + buildNum + "']";
+                getLogger().message(param);
+            }
         } catch (Exception e) {
             String msg = "unable to get branch name: " + e.getMessage();
             getLogger().error(msg);
             throw new RunBuildException(msg, e);
         }
+    }
+
+    private String ShortenBuildNumCreatedByGitVersion(String buildNum) {
+        buildNum = buildNum.replace("PullRequest.", "PR");
+        return buildNum;
     }
 
     private String getBranchName(String prNum) throws RunBuildException{
@@ -85,6 +97,8 @@ public class BuildService extends BuildServiceAdapter {
             throw new RunBuildException(prNum + " is not pull request number: " + e.getMessage() , e);
         }
 
+        getLogger().message("Trying to get branch name for pull request " + prNum + " from "
+                + repo.getOwner() + "'s " + repo.getName());
         try {
             pr = service.getPullRequest(repo, prNumInteger);
         } catch (IOException e) {
