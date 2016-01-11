@@ -4,7 +4,6 @@ package com.nicologies.prbranch;
 import com.nicologies.prbranch.common.PrBranchConstants;
 import com.nicologies.prbranch.common.SettingsKeys;
 import jetbrains.buildServer.requirements.Requirement;
-import jetbrains.buildServer.requirements.RequirementType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,7 +16,8 @@ public class RequirementsUtil {
         final List<Requirement> list = new ArrayList<Requirement>();
         final String authType = runParameters.get(SettingsKeys.AuthType);
         if (authType != null && authType.equals(PrBranchConstants.SystemWideTokenAuthType)) {
-            list.add(new Requirement("system." + SettingsKeys.GithubToken, null, RequirementType.EXISTS));
+            // seems teamcity cannot find the system wide property even if defined
+            // list.add(new Requirement("system." + SettingsKeys.GithubToken, null, RequirementType.EXISTS));
         }
         return list;
     }
