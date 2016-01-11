@@ -69,13 +69,21 @@ public class BuildService extends BuildServiceAdapter {
         }
         final Map<String, String> runnerParams = getRunnerParameters();
         final Map<String, String> configParams = getConfigParameters();
-        String token = runnerParams.get(SettingsKeys.GithubToken);
-        if(StringUtil.isEmptyOrSpaces(token)){
-            throw new InvalidParameterException("Please set the github token in the build step's settings page");
-        }
+
         PullRequestService service = new PullRequestService();
         String authType = runnerParams.get(SettingsKeys.AuthType);
-        if(authType.equals(PrBranchConstants.TokenAuthType)){
+        if(authType.equals(PrBranchConstants.SystemWideTokenAuthType)){
+            String token = getSystemProperties().get(SettingsKeys.GithubToken);
+            if(StringUtil.isEmptyOrSpaces(token)){
+                throw new InvalidParameterException("Please set the system wide github token");
+            }
+            service.getClient().setOAuth2Token(token);
+        }
+        else if(authType.equals(PrBranchConstants.TokenAuthType)){
+            String token = runnerParams.get(SettingsKeys.GithubToken);
+            if(StringUtil.isEmptyOrSpaces(token)){
+                throw new InvalidParameterException("Please set the github token in the build step's settings page");
+            }
             service.getClient().setOAuth2Token(token);
         }
         else{

@@ -15,6 +15,11 @@
       Github Username: <strong><props:displayValue name="${settings.githubUsername}" emptyValue="not specified"/></strong>
     </div>
   </c:when>
+  <c:when test="${propertiesBean.properties[settings.authType] == settings.systemWideTokenAuthType">
+    <div class="parameter">
+       <strong>System Wide Github Token</strong>
+    </div>
+  </c:when>
 </c:choose>
 
 <div class="parameter">

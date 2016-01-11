@@ -45,5 +45,10 @@ public class SettingsBean {
     public String getAppendToBuildNum(){
         return SettingsKeys.AppendToBuildNum;
     }
+
+    @NotNull
+    public String getSystemWideTokenAuthType(){
+        return PrBranchConstants.SystemWideTokenAuthType;
+    }
 }
 

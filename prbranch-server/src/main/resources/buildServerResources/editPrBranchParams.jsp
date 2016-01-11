@@ -15,6 +15,11 @@
   <c:set var="hideAuthByToken" value="style='display: none'"/>
 </c:if>
 
+<c:if test="${settings.systemWideTokenAuthType == propertiesBean.properties[settings.authType]}">
+  <c:set var="hideAuthByToken" value="style='display: none'"/>
+  <c:set var="hideAuthByUsername" value="style='display: none'"/>
+</c:if>
+
 <l:settingsGroup title="Settings">
   <tr>
     <th><label>Github Authorisation Type: </label></th>
@@ -30,7 +35,7 @@
                                  value="${settings.tokenAuthType}"
                                  checked="${settings.tokenAuthType == propertiesBean.properties[settings.authType]}"
                                  onclick="${onclickAuthByToken}" />
-        <label for="authTypeToken">Auth by token</label>
+        <label for="authTypeToken">Token</label>
 
       <span style="padding-left: 5em">
         <c:set var="onclickAuthByUsername">
@@ -43,8 +48,21 @@
                                    value="${settings.usernameAuthType}"
                                    checked="${settings.usernameAuthType == propertiesBean.properties[settings.authType]}"
                                    onclick="${onclickAuthByUsername}"/>
-        <label for="usernameAuthType">Auth by Github account</label>
+        <label for="usernameAuthType">Github Account</label>
       </span>
+       <span style="padding-left: 5em">
+              <c:set var="onclickAuthBySystemWideToken">
+                BS.Util.hide('usernameAuthSection');
+                BS.Util.hide('tokenSection');
+                BS.Util.hide('passwordAuthSection');
+              </c:set>
+              <props:radioButtonProperty name="${settings.authType}"
+                                         id="systemWideTokenAuthType"
+                                         value="${settings.systemWideTokenAuthType}"
+                                         checked="${settings.systemWideTokenAuthType == propertiesBean.properties[settings.authType]}"
+                                         onclick="${onclickAuthBySystemWideToken}"/>
+              <label for="systemWideTokenAuthType">System Wide Token(system.${settings.githubToken})</label>
+            </span>
     </td>
   </tr>
 
