@@ -46,8 +46,14 @@ public class BuildService extends BuildServiceAdapter {
             String appendToBuildNum = runnerParams.get(SettingsKeys.AppendToBuildNum);
             if(!StringUtil.isEmptyOrSpaces(appendToBuildNum)
                     && appendToBuildNum.toLowerCase().equals("true")) {
-                String buildNum = getConfigParameters().get("build.number") + "-" + branchName;
-                buildNum = ShortenBuildNumCreatedByGitVersion(buildNum);
+                String buildNum = getConfigParameters().get("build.number");
+                boolean isGitVersionBuildNum = buildNum.matches("(?i).*PullRequest\\.\\d*\\+.*");
+                if(isGitVersionBuildNum){
+                    buildNum = buildNum.replaceAll("(?i)PullRequest\\.\\d*", branchName);
+                }else{
+                    buildNum = buildNum + "-" + branchName;
+                }
+                buildNum = buildNum.replaceAll("(?i)PullRequest", "PR");
                 String param = "##teamcity[buildNumber " + "'" + buildNum + "']";
                 getLogger().message(param);
             }
@@ -56,11 +62,6 @@ public class BuildService extends BuildServiceAdapter {
             getLogger().error(msg);
             throw new RunBuildException(msg, e);
         }
-    }
-
-    private String ShortenBuildNumCreatedByGitVersion(String buildNum) {
-        buildNum = buildNum.replace("PullRequest.", "PR");
-        return buildNum;
     }
 
     private String getBranchName(String prNum) throws RunBuildException{
