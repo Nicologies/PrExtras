@@ -50,7 +50,7 @@ public class BuildService extends BuildServiceAdapter {
                 boolean isGitVersionBuildNum = buildNum.matches("(?i).*PullRequest\\.\\d*\\+.*");
                 if(isGitVersionBuildNum){
                     buildNum = buildNum.replaceAll("(?i)PullRequest\\.\\d*", branchName);
-                }else{
+                }else if(!buildNum.contains(branchName)){
                     buildNum = buildNum + "-" + branchName;
                 }
                 buildNum = buildNum.replaceAll("(?i)PullRequest", "PR");
