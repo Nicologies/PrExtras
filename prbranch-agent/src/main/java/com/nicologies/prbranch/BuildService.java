@@ -41,8 +41,12 @@ public class BuildService extends BuildServiceAdapter {
 
             PullRequestService service = getPullRequestService(runnerParams);
             String prNum = configParams.get("teamcity.build.branch");
-            FailBuildIfConflict(runnerParams, service, prNum);
-            String branchName = getBranchName(service, prNum);
+            PullRequest pullRequest = null;
+            if(StringUtil.isNumber(prNum)){
+                pullRequest = getPullRequest(service, prNum);
+            }
+
+            String branchName = getBranchName(pullRequest, prNum);
             if(!StringUtil.isEmptyOrSpaces(paramName)) {
                 getBuild().addSharedConfigParameter(paramName, branchName);
             }
@@ -61,36 +65,40 @@ public class BuildService extends BuildServiceAdapter {
                 String param = "##teamcity[buildNumber " + "'" + buildNum + "']";
                 getLogger().message(param);
             }
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            getLogger().error(msg);
-            throw new RunBuildException(msg, e);
+
+            FailBuildIfConflict(runnerParams, pullRequest);
+        } catch(RunBuildException e){
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RunBuildException(e.getMessage(), e);
         }
     }
 
     private void FailBuildIfConflict(Map<String, String> runnerParams,
-                                     PullRequestService service, String prNum) throws RunBuildException {
-        if(!StringUtil.isNumber(prNum)){
+                                     PullRequest pr) throws RunBuildException {
+        if(pr == null){
             return;
         }
         String failBuildIfConflict = runnerParams.get(SettingsKeys.FailBuildIfConflict);
 
         if(!StringUtil.isEmptyOrSpaces(failBuildIfConflict) && failBuildIfConflict.equalsIgnoreCase("true")){
-            PullRequest pr = getPullRequest(service, prNum);
             if(!pr.isMergeable()){
-                throw new RunBuildException("The pull request has conflicts");
+                String msg = "The pull request has conflicts " + pr.getHtmlUrl();
+                throw new RunBuildException(msg);
             }
         }
     }
 
-    private String getBranchName(PullRequestService service, String prNum) throws RunBuildException{
-        if(!StringUtil.isNumber(prNum)){
+    private String getBranchName(PullRequest pr, String prNum) throws RunBuildException{
+        if(!StringUtil.isNumber(prNum)) {
             return prNum;
         }
-
-        PullRequest pr = getPullRequest(service, prNum);
-
-        return pr.getHead().getRef();
+        try {
+            return pr.getHead().getRef();
+        }catch (Exception ex){
+            throw new RunBuildException("Unable to get branch name for pull request " + ex.getMessage(), ex);
+        }
     }
 
     private PullRequest getPullRequest(PullRequestService service, String prNum) throws RunBuildException {
