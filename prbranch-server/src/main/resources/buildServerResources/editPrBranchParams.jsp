@@ -106,4 +106,12 @@
       <span class="error" id="error_${settings.appendToBuildNum}"></span>
     </td>
   </tr>
+
+  <tr>
+    <th><label for="${settings.failBuildIfConflict}">Fail the build if the pull request has conflicts</label></th>
+    <td>
+      <props:checkboxProperty name="${settings.failBuildIfConflict}"/>
+      <span class="error" id="error_${settings.failBuildIfConflict}"></span>
+    </td>
+  </tr>
 </l:settingsGroup>

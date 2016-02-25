@@ -8,4 +8,5 @@ public class SettingsKeys {
     public final static String GithubUserName = "prbranch.github_username";
     public final static String GithubPassword = "prbranch.github_password";
     public final static String AppendToBuildNum = "prbranch.append_to_build_num";
+    public final static String FailBuildIfConflict = "prbranch.fail_build_if_conflict";
 }

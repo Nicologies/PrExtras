@@ -50,5 +50,9 @@ public class SettingsBean {
     public String getSystemWideTokenAuthType(){
         return PrBranchConstants.SystemWideTokenAuthType;
     }
+    @NotNull
+    public String getFailBuildIfConflict(){
+        return SettingsKeys.FailBuildIfConflict;
+    }
 }
 

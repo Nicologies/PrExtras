@@ -63,6 +63,7 @@ public class PrBranchRunType extends jetbrains.buildServer.serverSide.RunType{
         parameters.put(SettingsKeys.ExportParamName, PrBranchConstants.DefaultExportParamName);
         parameters.put(SettingsKeys.AuthType, PrBranchConstants.TokenAuthType);
         parameters.put(SettingsKeys.AppendToBuildNum, "true");
+        parameters.put(SettingsKeys.FailBuildIfConflict, "true");
         return parameters;
     }
     @NotNull

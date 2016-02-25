@@ -2,6 +2,7 @@ package com.nicologies.prbranch;
 
 import com.nicologies.prbranch.common.PrBranchConstants;
 import com.nicologies.prbranch.common.SettingsKeys;
+import jetbrains.buildServer.BuildProblemData;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
@@ -37,8 +38,11 @@ public class BuildService extends BuildServiceAdapter {
                 getLogger().error(msg);
                 throw new RunBuildException(msg);
             }
-            String pullReq = configParams.get("teamcity.build.branch");
-            String branchName = getBranchName(pullReq);
+
+            PullRequestService service = getPullRequestService(runnerParams);
+            String prNum = configParams.get("teamcity.build.branch");
+            FailBuildIfConflict(runnerParams, service, prNum);
+            String branchName = getBranchName(service, prNum);
             if(!StringUtil.isEmptyOrSpaces(paramName)) {
                 getBuild().addSharedConfigParameter(paramName, branchName);
             }
@@ -58,19 +62,63 @@ public class BuildService extends BuildServiceAdapter {
                 getLogger().message(param);
             }
         } catch (Exception e) {
-            String msg = "unable to get branch name: " + e.getMessage();
+            String msg = e.getMessage();
             getLogger().error(msg);
             throw new RunBuildException(msg, e);
         }
     }
 
-    private String getBranchName(String prNum) throws RunBuildException{
+    private void FailBuildIfConflict(Map<String, String> runnerParams,
+                                     PullRequestService service, String prNum) throws RunBuildException {
+        if(!StringUtil.isNumber(prNum)){
+            return;
+        }
+        String failBuildIfConflict = runnerParams.get(SettingsKeys.FailBuildIfConflict);
+
+        if(!StringUtil.isEmptyOrSpaces(failBuildIfConflict) && failBuildIfConflict.equalsIgnoreCase("true")){
+            PullRequest pr = getPullRequest(service, prNum);
+            if(!pr.isMergeable()){
+                throw new RunBuildException("The pull request has conflicts");
+            }
+        }
+    }
+
+    private String getBranchName(PullRequestService service, String prNum) throws RunBuildException{
         if(!StringUtil.isNumber(prNum)){
             return prNum;
         }
-        final Map<String, String> runnerParams = getRunnerParameters();
+
+        PullRequest pr = getPullRequest(service, prNum);
+
+        return pr.getHead().getRef();
+    }
+
+    private PullRequest getPullRequest(PullRequestService service, String prNum) throws RunBuildException {
         final Map<String, String> configParams = getConfigParameters();
 
+        String repoUrl = configParams.get("vcsroot.url");
+        RepositoryId repo = RepoInfoParser.Parse(repoUrl);
+
+        PullRequest pr;
+        int prNumInteger;
+        try {
+            prNumInteger = Integer.parseInt(prNum);
+        } catch (Exception e) {
+            throw new RunBuildException(prNum + " is not pull request number: " + e.getMessage() , e);
+        }
+
+        getLogger().message("Trying to get branch name for pull request " + prNum + " from "
+                + repo.getOwner() + "'s " + repo.getName());
+        try {
+            pr = service.getPullRequest(repo, prNumInteger);
+        } catch (IOException e) {
+            throw new RunBuildException("unable to get pull request info: " + e.getMessage(), e);
+        }
+        return pr;
+    }
+
+    @NotNull
+    private PullRequestService getPullRequestService(Map<String, String> runnerParams) {
         PullRequestService service = new PullRequestService();
         String authType = runnerParams.get(SettingsKeys.AuthType);
         if(authType.equals(PrBranchConstants.SystemWideTokenAuthType)){
@@ -94,27 +142,7 @@ public class BuildService extends BuildServiceAdapter {
             }
             service.getClient().setCredentials(runnerParams.get(SettingsKeys.GithubUserName), password);
         }
-
-        String repoUrl = configParams.get("vcsroot.url");
-        RepositoryId repo = RepoInfoParser.Parse(repoUrl);
-
-        PullRequest pr;
-        int prNumInteger;
-        try {
-            prNumInteger = Integer.parseInt(prNum);
-        } catch (Exception e) {
-            throw new RunBuildException(prNum + " is not pull request number: " + e.getMessage() , e);
-        }
-
-        getLogger().message("Trying to get branch name for pull request " + prNum + " from "
-                + repo.getOwner() + "'s " + repo.getName());
-        try {
-            pr = service.getPullRequest(repo, prNumInteger);
-        } catch (IOException e) {
-            throw new RunBuildException("unable to get pull request info: " + e.getMessage(), e);
-        }
-
-        return pr.getHead().getRef();
+        return service;
     }
 
     @NotNull
