@@ -2,13 +2,14 @@ package com.nicologies.prbranch;
 
 import com.nicologies.prbranch.common.PrBranchConstants;
 import com.nicologies.prbranch.common.SettingsKeys;
-import jetbrains.buildServer.BuildProblemData;
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.AgentRunningBuild;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.util.StringUtil;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryId;
+import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,9 +48,13 @@ public class BuildService extends BuildServiceAdapter {
             }
 
             String branchName = getBranchName(pullRequest, prNum);
+            AgentRunningBuild build = getBuild();
             if(!StringUtil.isEmptyOrSpaces(paramName)) {
-                getBuild().addSharedConfigParameter(paramName, branchName);
+                build.addSharedConfigParameter(paramName, branchName);
+                build.addSharedConfigParameter("teamcity.build.pull_req.branch_name", branchName);
             }
+
+            ExportPullReqMetaInfo(pullRequest, build);
 
             String appendToBuildNum = runnerParams.get(SettingsKeys.AppendToBuildNum);
             if(!StringUtil.isEmptyOrSpaces(appendToBuildNum)
@@ -72,6 +77,22 @@ public class BuildService extends BuildServiceAdapter {
         }
         catch (Exception e) {
             throw new RunBuildException(e.getMessage(), e);
+        }
+    }
+
+    private void ExportPullReqMetaInfo(PullRequest pullRequest, AgentRunningBuild build) {
+        if(pullRequest == null){
+            return;
+        }
+        User user = pullRequest.getUser();
+        build.addSharedConfigParameter("teamcity.build.pull_req.author", user.getName());
+        build.addSharedConfigParameter("teamcity.build.pull_req.author_email", user.getEmail());
+        build.addSharedConfigParameter("teamcity.build.pull_req.url", pullRequest.getHtmlUrl());
+        build.addSharedConfigParameter("teamcity.build.pull_req.diff_url", pullRequest.getDiffUrl());
+        User assignee = pullRequest.getAssignee();
+        if(assignee != null){
+            build.addSharedConfigParameter("teamcity.build.pull_req.assignee", assignee.getName());
+            build.addSharedConfigParameter("teamcity.build.pull_req.assignee_email", assignee.getEmail());
         }
     }
 
