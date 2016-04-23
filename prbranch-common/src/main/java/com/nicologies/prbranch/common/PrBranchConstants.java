@@ -6,4 +6,5 @@ public class PrBranchConstants {
     public final static String TokenAuthType = "Token";
     public final static String UsernameAuthType = "Username";
     public final static String SystemWideTokenAuthType = "SystemWideToken";
+    public final static String PrefixOfUserMapping = "prbranch.user_mapping.";
 }

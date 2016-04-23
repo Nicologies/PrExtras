@@ -7,6 +7,7 @@ import jetbrains.buildServer.agent.AgentRunningBuild;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.util.StringUtil;
+import jetbrains.buildServer.util.StringUtils;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.User;
@@ -39,6 +40,12 @@ public class BuildService extends BuildServiceAdapter {
                 getLogger().error(msg);
                 throw new RunBuildException(msg);
             }
+            AgentRunningBuild build = getBuild();
+            String triggeredBy = configParams.get("teamcity.build.triggeredBy.username");
+            if(StringUtil.isNotEmpty(triggeredBy)){
+                build.addSharedConfigParameter("teamcity.build.triggered_by.mapped_user",
+                        MapUser(triggeredBy, configParams));
+            }
 
             PullRequestService service = getPullRequestService(runnerParams);
             String prNum = configParams.get("teamcity.build.branch");
@@ -48,13 +55,13 @@ public class BuildService extends BuildServiceAdapter {
             }
 
             String branchName = getBranchName(pullRequest, prNum);
-            AgentRunningBuild build = getBuild();
+
             if(!StringUtil.isEmptyOrSpaces(paramName)) {
                 build.addSharedConfigParameter(paramName, branchName);
                 build.addSharedConfigParameter("teamcity.build.pull_req.branch_name", branchName);
             }
 
-            ExportPullReqMetaInfo(pullRequest, build);
+            ExportPullReqMetaInfo(pullRequest, build, configParams);
 
             String appendToBuildNum = runnerParams.get(SettingsKeys.AppendToBuildNum);
             if(!StringUtil.isEmptyOrSpaces(appendToBuildNum)
@@ -80,19 +87,48 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
-    private void ExportPullReqMetaInfo(PullRequest pullRequest, AgentRunningBuild build) {
+    private void ExportPullReqMetaInfo(PullRequest pullRequest, AgentRunningBuild build,
+                                       Map<String, String> configParams) {
         if(pullRequest == null){
             return;
         }
         User user = pullRequest.getUser();
-        build.addSharedConfigParameter("teamcity.build.pull_req.author", user.getName());
-        build.addSharedConfigParameter("teamcity.build.pull_req.author_email", user.getEmail());
-        build.addSharedConfigParameter("teamcity.build.pull_req.url", pullRequest.getHtmlUrl());
-        build.addSharedConfigParameter("teamcity.build.pull_req.diff_url", pullRequest.getDiffUrl());
+        String email = user.getEmail();
+        if(!StringUtil.isEmptyOrSpaces(email)) {
+            build.addSharedConfigParameter("teamcity.build.pull_req.author_email", email);
+        }
+
+        String login = user.getLogin();
+        if(!StringUtil.isEmptyOrSpaces(login)){
+            build.addSharedConfigParameter("teamcity.build.pull_req.author", MapUser(login, configParams));
+        }
+
+        String htmlUrl = pullRequest.getHtmlUrl();
+        if(!StringUtil.isEmptyOrSpaces(htmlUrl)) {
+            build.addSharedConfigParameter("teamcity.build.pull_req.url", htmlUrl);
+        }
+
         User assignee = pullRequest.getAssignee();
         if(assignee != null){
-            build.addSharedConfigParameter("teamcity.build.pull_req.assignee", assignee.getName());
-            build.addSharedConfigParameter("teamcity.build.pull_req.assignee_email", assignee.getEmail());
+            login = assignee.getLogin();
+            if(!StringUtil.isEmptyOrSpaces(login)) {
+                build.addSharedConfigParameter("teamcity.build.pull_req.assignee",
+                        MapUser(login, configParams));
+            }
+            email = assignee.getEmail();
+            if(!StringUtil.isEmptyOrSpaces(email)) {
+                build.addSharedConfigParameter("teamcity.build.pull_req.assignee_email", email);
+            }
+        }
+
+    }
+
+    private String MapUser(String name, Map<String, String> configParams) {
+        String mappedName = configParams.get(PrBranchConstants.PrefixOfUserMapping + name);
+        if(StringUtil.isEmptyOrSpaces(mappedName)){
+            return name;
+        }else{
+            return mappedName;
         }
     }
 
