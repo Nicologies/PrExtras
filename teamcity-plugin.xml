@@ -4,16 +4,13 @@
     <name>prbranch</name>
     <display-name>pull request to branch name</display-name>
     <version>@Version@</version>
-    <description>A Plugin to Retrieve GitHub Pull Request info such as:
- - branch name
- - author
- - assignee
+    <description>A Plugin to Retrieve GitHub Pull Request info such as: branch name author assignee and pull request url
     </description>
     <download-url>https://github.com/Nicologies/PrBranch/releases/latest</download-url>
     <email>nicologies@gmail.com</email>
     <vendor>
       <name>Nicologies</name>
-      <url>http://nicologies.tk</url>
+      <url>https://github.com/Nicologies/PrBranch/releases/latest</url>
       <logo>Plugin vendor logo URL</logo>
     </vendor>
   </info>
