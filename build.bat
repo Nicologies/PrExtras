@@ -1,2 +1,2 @@
 mvn package
-cp target/prbranch.zip /d/tools/TeamCity/data/plugins/ -f 
+cp target/prextras.zip /d/tools/TeamCity/data/plugins/ -f

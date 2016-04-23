@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>prbranch</artifactId>
-    <groupId>com.nicologies.prbranch</groupId>
+    <artifactId>prextras</artifactId>
+    <groupId>com.nicologies.prextras</groupId>
     <version>1.0.0</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
   <properties>
-      <teamcity.prbranch.plugin.version>${project.parent.version}</teamcity.prbranch.plugin.version>
+      <teamcity.prextras.plugin.version>${project.parent.version}</teamcity.prextras.plugin.version>
   </properties>
   <dependencies>
       <dependency>
-           <groupId>com.nicologies.prbranch</groupId>
-           <artifactId>prbranch-server</artifactId>
+           <groupId>com.nicologies.prextras</groupId>
+           <artifactId>prextras-server</artifactId>
            <version>1.0.0</version>
       </dependency>
   </dependencies>
@@ -38,7 +38,7 @@
                 <replacements>
                     <replacement>
                         <token>@Version@</token>
-                        <value>${teamcity.prbranch.plugin.version}</value>
+                        <value>${teamcity.prextras.plugin.version}</value>
                     </replacement>
                 </replacements>
             </configuration>
@@ -54,7 +54,7 @@
                   <goal>single</goal>
                 </goals>
                 <configuration>
-                  <finalName>prbranch</finalName>
+                  <finalName>prextras</finalName>
                   <outputDirectory>${project.parent.build.directory}</outputDirectory>
                   <appendAssemblyId>false</appendAssemblyId>
                   <descriptors>

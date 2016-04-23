@@ -11,7 +11,7 @@
          <outputDirectory>/</outputDirectory>
      </file> 
      <file>
-         <source>../prbranch-agent/target/prbranch.zip</source>
+         <source>../prextras-agent/target/prextras.zip</source>
          <outputDirectory>/agent</outputDirectory>
      </file>
   </files>
@@ -19,7 +19,7 @@
     <moduleSet>
        <useAllReactorProjects>true</useAllReactorProjects>
        <includes>
-           <include>com.nicologies.prbranch:prbranch-server</include>
+           <include>com.nicologies.prextras:prextras-server</include>
        </includes> 
        <binaries>
            <outputDirectory>server</outputDirectory>
