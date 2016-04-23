@@ -6,7 +6,7 @@
   <parent>
     <artifactId>prbranch</artifactId>
     <groupId>com.nicologies.prbranch</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>prbranch-server</artifactId>
   <packaging>jar</packaging>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.nicologies.prbranch</groupId>
       <artifactId>prbranch-common</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 </project>
