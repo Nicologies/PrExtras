@@ -41,11 +41,6 @@ public class BuildService extends BuildServiceAdapter {
                 throw new RunBuildException(msg);
             }
             AgentRunningBuild build = getBuild();
-            String triggeredBy = configParams.get("teamcity.build.triggeredBy.username");
-            if(StringUtil.isNotEmpty(triggeredBy)){
-                build.addSharedConfigParameter("teamcity.build.triggered_by.mapped_user",
-                        MapUser(triggeredBy, configParams));
-            }
 
             PullRequestService service = getPullRequestService(runnerParams);
             String prNum = configParams.get("teamcity.build.branch");
@@ -123,7 +118,7 @@ public class BuildService extends BuildServiceAdapter {
 
     }
 
-    private String MapUser(String name, Map<String, String> configParams) {
+    private static String MapUser(String name, Map<String, String> configParams) {
         String mappedName = configParams.get(PrExtrasConstants.PrefixOfUserMapping + name);
         if(StringUtil.isEmptyOrSpaces(mappedName)){
             return name;

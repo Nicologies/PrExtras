@@ -5,4 +5,5 @@
        default-autowire="constructor">
     <bean id="PrExtrasRunType" class="com.nicologies.prextras.PrExtrasRunType"></bean>
     <bean id="UserMappingProvider" class="com.nicologies.prextras.UserMappingProvider"></bean>
+    <bean id="UserMappingBuildParamPreprocessor" class="com.nicologies.prextras.BuildParametersPreprocessor"></bean>
 </beans>
