@@ -140,7 +140,7 @@ public class BuildService extends BuildServiceAdapter {
         String failBuildIfConflict = runnerParams.get(SettingsKeys.FailBuildIfConflict);
 
         if(!StringUtil.isEmptyOrSpaces(failBuildIfConflict) && failBuildIfConflict.equalsIgnoreCase("true")){
-            if(!pr.isMergeable()){
+            if(!pr.isMerged() && !pr.isMergeable()){
                 String msg = "The pull request has conflicts " + pr.getHtmlUrl();
                 throw new RunBuildException(msg);
             }
