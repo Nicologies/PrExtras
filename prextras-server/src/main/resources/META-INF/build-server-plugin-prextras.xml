@@ -4,6 +4,4 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
     <bean id="PrExtrasRunType" class="com.nicologies.prextras.PrExtrasRunType"></bean>
-    <bean id="UserMappingProvider" class="com.nicologies.prextras.UserMappingProvider"></bean>
-    <bean id="UserMappingBuildParamPreprocessor" class="com.nicologies.prextras.BuildParametersPreprocessor"></bean>
 </beans>
