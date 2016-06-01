@@ -7,7 +7,6 @@ import jetbrains.buildServer.agent.AgentRunningBuild;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.util.StringUtil;
-import jetbrains.buildServer.util.StringUtils;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.User;
@@ -45,7 +44,10 @@ public class BuildService extends BuildServiceAdapter {
             PullRequestService service = getPullRequestService(runnerParams);
             String prNum = configParams.get("teamcity.build.branch");
             PullRequest pullRequest = null;
-            if(StringUtil.isNumber(prNum)){
+            boolean isPullRequestBuild = configParams.containsValue("refs/pull/" + prNum + "/merge")
+                    || configParams.containsValue("refs/pull/" + prNum + "/head");
+            isPullRequestBuild &= StringUtil.isNumber(prNum);
+            if(isPullRequestBuild){
                 pullRequest = getPullRequest(service, prNum);
             }
 
