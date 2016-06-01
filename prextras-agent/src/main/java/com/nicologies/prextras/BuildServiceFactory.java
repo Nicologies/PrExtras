@@ -20,10 +20,6 @@ public class BuildServiceFactory implements CommandLineBuildServiceFactory, Agen
     }
 
     public boolean canRun(@NotNull final BuildAgentConfiguration agentConfiguration) {
-        if (!agentConfiguration.getSystemInfo().isWindows()) {
-            LOG.debug(getType() + " runner is supported only under Windows platform");
-            return false;
-        }
         return true;
     }
 
