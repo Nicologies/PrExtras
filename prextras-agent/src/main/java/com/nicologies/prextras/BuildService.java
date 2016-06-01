@@ -50,6 +50,8 @@ public class BuildService extends BuildServiceAdapter {
             if(isPullRequestBuild){
                 pullRequest = getPullRequest(service, prNum);
             }
+            build.addSharedConfigParameter("teamcity.build.pull_req.is_pull_req",
+                    isPullRequestBuild? "true":"false");
 
             String branchName = getBranchName(pullRequest, prNum);
 
