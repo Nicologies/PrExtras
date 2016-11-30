@@ -189,7 +189,7 @@ public class BuildService extends BuildServiceAdapter {
             return prNum;
         }
         try {
-            return pr.getHead().getRef();
+            return pr != null? pr.getHead().getRef(): prNum;
         }catch (Exception ex){
             throw new RunBuildException("Unable to get branch name for pull request " + ex.getMessage(), ex);
         }
