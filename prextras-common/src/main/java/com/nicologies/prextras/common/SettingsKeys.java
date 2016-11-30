@@ -2,7 +2,6 @@ package com.nicologies.prextras.common;
 
 public class SettingsKeys {
     public final static String GithubToken = "prextras.github_token";
-    public final static String ExportParamName = "prextras.export_param_name";
     public final static String AuthType = "prextras.auth_type";
     public final static String Password= "prextras.password";
     public final static String GithubUserName = "prextras.github_username";

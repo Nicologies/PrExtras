@@ -19,6 +19,7 @@ import java.util.*;
 
 public class BuildService extends BuildServiceAdapter {
     private boolean _isOnWindows = true;
+    private static final String BranchNameParamName = "teamcity.build.pull_req.branch_name";
     public BuildService() {
     }
 
@@ -31,12 +32,6 @@ public class BuildService extends BuildServiceAdapter {
         _isOnWindows = configParams.get("teamcity.agent.jvm.os.name").toLowerCase().startsWith("win");
 
         try {
-            String paramName = runnerParams.get(SettingsKeys.ExportParamName);
-            if(StringUtil.isEmptyOrSpaces(paramName)){
-                String msg = "Please set the "+ SettingsKeys.ExportParamName +" in the build step's settings page";
-                getLogger().error(msg);
-                throw new RunBuildException(msg);
-            }
             AgentRunningBuild build = getBuild();
 
             PullRequestService service = new PullRequestService();
@@ -55,10 +50,7 @@ public class BuildService extends BuildServiceAdapter {
 
             String branchName = getBranchName(pullRequest, prNum);
 
-            if(!StringUtil.isEmptyOrSpaces(paramName)) {
-                build.addSharedConfigParameter(paramName, branchName);
-                build.addSharedConfigParameter("teamcity.build.pull_req.branch_name", branchName);
-            }
+            build.addSharedConfigParameter(BranchNameParamName, branchName);
 
             ExportPullRequestExtraInfo(pullRequest, build, configParams);
 
@@ -276,7 +268,7 @@ public class BuildService extends BuildServiceAdapter {
                     ret.add("/c");
                 }
                 ret.add("echo");
-                ret.add("Branch name is " + getConfigParameters().get(getRunnerParameters().get(SettingsKeys.ExportParamName)));
+                ret.add("Branch name is " + getConfigParameters().get(BranchNameParamName));
                 return ret;
             }
 

@@ -92,14 +92,6 @@
   </tr>
 
   <tr>
-    <th><label for="${settings.exportParamName}">Export branch name to a configuration parameter</label></th>
-    <td><props:textProperty name="${settings.exportParamName}" className="longField"/>
-      <span class="error" id="error_${settings.exportParamName}"></span>
-      <span class="smallNote">Export the branch name as a teamcity configuration parameter, so you can use it later in the build process</span>
-    </td>
-  </tr>
-
-  <tr>
     <th><label for="${settings.appendToBuildNum}">Append the branch name to the build num label</label></th>
     <td>
       <props:checkboxProperty name="${settings.appendToBuildNum}"/>

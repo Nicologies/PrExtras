@@ -23,9 +23,5 @@
 </c:choose>
 
 <div class="parameter">
-  Export branch name as configuration parameter: <strong><props:displayValue name="${settings.exportParamName}" emptyValue="not specified"/></strong>
-</div>
-
-<div class="parameter">
   Append branch name to build num? <strong><props:displayCheckboxValue name="${settings.AppendToBuildNum}"/></strong>
 </div>

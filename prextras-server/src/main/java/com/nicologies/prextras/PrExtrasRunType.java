@@ -60,7 +60,6 @@ public class PrExtrasRunType extends jetbrains.buildServer.serverSide.RunType{
     public Map<String, String> getDefaultRunnerProperties() {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(SettingsKeys.GithubToken, "");
-        parameters.put(SettingsKeys.ExportParamName, PrExtrasConstants.DefaultExportParamName);
         parameters.put(SettingsKeys.AuthType, PrExtrasConstants.TokenAuthType);
         parameters.put(SettingsKeys.AppendToBuildNum, "true");
         parameters.put(SettingsKeys.FailBuildIfConflict, "true");

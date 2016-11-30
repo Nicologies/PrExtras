@@ -11,11 +11,6 @@ public class SettingsBean {
     }
 
     @NotNull
-    public String getExportParamName(){
-        return SettingsKeys.ExportParamName;
-    }
-
-    @NotNull
     public String getAuthType(){
         return SettingsKeys.AuthType;
     }
