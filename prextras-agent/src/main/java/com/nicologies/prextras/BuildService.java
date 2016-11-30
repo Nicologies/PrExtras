@@ -86,8 +86,14 @@ public class BuildService extends BuildServiceAdapter {
                                             AgentRunningBuild build,
                                             Map<String, String> configParams) {
         if(pullRequest == null){
+            build.addSharedConfigParameter("teamcity.build.pull_req.is_merged", "false");
+            build.addSharedConfigParameter("teamcity.build.pull_req.is_closed", "false");
             return;
         }
+        build.addSharedConfigParameter("teamcity.build.pull_req.is_merged", pullRequest.isMerged()? "true" : "false");
+        build.addSharedConfigParameter("teamcity.build.pull_req.is_closed",
+                pullRequest.getClosedAt() != null? "true" : "false");
+
         User user = pullRequest.getUser();
         String email = user.getEmail();
         if(!StringUtil.isEmptyOrSpaces(email)) {
