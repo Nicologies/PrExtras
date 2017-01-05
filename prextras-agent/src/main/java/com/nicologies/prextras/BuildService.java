@@ -36,6 +36,8 @@ public class BuildService extends BuildServiceAdapter {
 
             PullRequestService service = new PullRequestService();
             initService(service);
+            IssueService issueService = new IssueService(service.getClient());
+
             String prNum = configParams.get("teamcity.build.branch");
             PullRequest pullRequest = null;
             boolean isPullRequestBuild = configParams.containsValue("refs/pull/" + prNum + "/merge")
@@ -52,7 +54,7 @@ public class BuildService extends BuildServiceAdapter {
 
             build.addSharedConfigParameter(BranchNameParamName, branchName);
 
-            ExportPullRequestExtraInfo(pullRequest, build, configParams);
+            ExportPullRequestExtraInfo(pullRequest, build, configParams, issueService);
 
             if(pullRequest != null && pullRequest.getComments() > 0){
                 ExportPrParticipants(service, repo, pullRequest.getNumber(), configParams);
@@ -84,7 +86,8 @@ public class BuildService extends BuildServiceAdapter {
 
     private void ExportPullRequestExtraInfo(PullRequest pullRequest,
                                             AgentRunningBuild build,
-                                            Map<String, String> configParams) {
+                                            Map<String, String> configParams,
+                                            IssueService issueService) {
         if(pullRequest == null){
             build.addSharedConfigParameter("teamcity.build.pull_req.is_merged", "false");
             build.addSharedConfigParameter("teamcity.build.pull_req.is_closed", "false");
@@ -120,6 +123,18 @@ public class BuildService extends BuildServiceAdapter {
             if(!StringUtil.isEmptyOrSpaces(email)) {
                 build.addSharedConfigParameter("teamcity.build.pull_req.assignee_email", email);
             }
+        }
+        RepositoryId repo = getRepository(configParams);
+        try {
+            Issue issue = issueService.getIssue(repo, pullRequest.getNumber());
+            List<Label> labels = issue.getLabels();
+            if(!labels.isEmpty()) {
+                String labelsString = StringUtil.join(";", labels.toArray());
+                build.addSharedConfigParameter("teamcity.build.pull_req.labels", labelsString);
+            }
+        } catch (IOException e) {
+            getLogger().message(e.getMessage() + e.getStackTrace());
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
