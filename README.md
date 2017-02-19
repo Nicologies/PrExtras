@@ -56,7 +56,7 @@ it will output the follow parameters
 - `teamcity.build.pull_req.is_closed`: indicate if the pull request is closed or not
 - `teamcity.build.pull_req.labels`: labels separated by `;`
 
-## Work with other plugins
+## Integrate with other plugins
 
 When using this plugin with [Hedwig](https://github.com/Nicologies/Hedwig) and [User Mapping](https://github.com/Nicologies/usermapping), you will be able to send Slack/HipChat notification of the build failures to the pull request author, assignee, participants and the guy who triggerred the build. 
 
