@@ -1,5 +1,13 @@
 # PrExtras
-A teamcity plugin to get extra information of the GitHub pull request being built.
+A teamcity plugin to get extra information of the GitHub pull request being built. Such as the 
+
+- Branch name, and it will also be displayed as part of the TeamCity build number label
+
+![Image of branch name in build number label](/BranchNameOfPr.png)
+
+- Author, assignee, participants who commented on the pull request
+- Pull request URL
+- Labels
 
 ## Install
 
@@ -8,6 +16,8 @@ Copy the [plugin](https://github.com/Nicologies/PrExtras/releases/latest) to tea
 ## Configuration
 
 Add a build step with run type of `PullRequest Extra Info` to your build configuration
+
+![Image of Adding a build step](/AddABuildStep.png)
 
 ### Authorization
 
