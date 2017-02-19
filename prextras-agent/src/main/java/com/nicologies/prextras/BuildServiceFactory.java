@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildServiceFactory implements CommandLineBuildServiceFactory, AgentBuildRunnerInfo {
-    private static final Logger LOG = Logger.getLogger(BuildServiceFactory.class);
-
     public BuildServiceFactory() {
     }
 
