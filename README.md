@@ -1,4 +1,5 @@
 # PrExtras
+
 A teamcity plugin to get extra information of the GitHub pull request being built. Such as the 
 
 - Branch name, and it will also be displayed as part of the TeamCity build number label
@@ -29,11 +30,11 @@ Just the username and password
 
 - `System Wide Token`
 This is also the personal access token.
-But instead of put it in a specific build configuration, you can define `system.prextras.github_token` parameter that can be shared with amoung multiple build conifgurations
+But instead of put it in a specific build configuration, you can define `system.prextras.github_token` parameter that can be shared with  other build conifgurations
 
 ### Build label
 
-Tick the `Append branch name to build num label` to display the branch name instead of pull request number
+Tick the `Append branch name to build num label` to display the branch name as part of the TeamCity build number label instead of the pull request number
 
 ### Fail when conflicts
 
@@ -54,4 +55,8 @@ it will output the follow parameters
 - `teamcity.build.pull_req.is_merged`: indicate if the pull request is merged or not
 - `teamcity.build.pull_req.is_closed`: indicate if the pull request is closed or not
 - `teamcity.build.pull_req.labels`: labels separated by `;`
+
+## Work with other plugins
+
+When using this plugin with [Hedwig](https://github.com/Nicologies/Hedwig) and [User Mapping](https://github.com/Nicologies/usermapping), you will be able to send Slack/HipChat notification of the build failures to the pull request author, assignee, participants and the guy who triggerred the build. 
 
