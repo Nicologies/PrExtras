@@ -57,7 +57,7 @@ public class BuildService extends BuildServiceAdapter {
             ExportPullRequestExtraInfo(pullRequest, build, configParams, issueService);
 
             if(pullRequest != null && pullRequest.getComments() > 0){
-                ExportPrParticipants(service, repo, pullRequest.getNumber(), configParams);
+                ExportPrParticipants(service, repo, pullRequest.getNumber());
             }
 
             String appendToBuildNum = runnerParams.get(SettingsKeys.AppendToBuildNum);
@@ -103,9 +103,9 @@ public class BuildService extends BuildServiceAdapter {
             build.addSharedConfigParameter("teamcity.build.pull_req.author_email", email);
         }
 
-        String mappedAuthor = MapGitHubUser(user, configParams);
-        if(!StringUtil.isEmptyOrSpaces(mappedAuthor)){
-            build.addSharedConfigParameter("teamcity.build.pull_req.author", mappedAuthor);
+        String authorName = getGitHubUser(user);
+        if(!StringUtil.isEmptyOrSpaces(authorName)){
+            build.addSharedConfigParameter("teamcity.build.pull_req.author", authorName);
         }
 
         String htmlUrl = pullRequest.getHtmlUrl();
@@ -115,9 +115,9 @@ public class BuildService extends BuildServiceAdapter {
 
         User assignee = pullRequest.getAssignee();
         if(assignee != null){
-            String mappedAssignee = MapGitHubUser(assignee, configParams);
-            if(!StringUtil.isEmptyOrSpaces(mappedAssignee)) {
-                build.addSharedConfigParameter("teamcity.build.pull_req.assignee", mappedAssignee);
+            String assigneeName = getGitHubUser(assignee);
+            if(!StringUtil.isEmptyOrSpaces(assigneeName)) {
+                build.addSharedConfigParameter("teamcity.build.pull_req.assignee", assigneeName);
             }
             email = assignee.getEmail();
             if(!StringUtil.isEmptyOrSpaces(email)) {
@@ -138,14 +138,13 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
-    private void ExportPrParticipants(PullRequestService service, RepositoryId repo, int prNum,
-                                      Map<String, String> configParams) {
+    private void ExportPrParticipants(PullRequestService service, RepositoryId repo, int prNum) {
         try {
             HashSet<String> participants = new HashSet<String>();
-            getParticipantsFromComments(configParams, participants, service.getComments(repo, prNum));
+            getParticipantsFromComments(participants, service.getComments(repo, prNum));
             IssueService issueService = new IssueService();
             initService(issueService);
-            getParticipantsFromComments(configParams, participants, issueService.getComments(repo, prNum));
+            getParticipantsFromComments(participants, issueService.getComments(repo, prNum));
             if(participants.isEmpty()){
                 return;
             }
@@ -158,10 +157,9 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
-    private void getParticipantsFromComments(Map<String, String> configParams,
-                                             HashSet<String> participants, List<? extends Comment> comments) {
+    private void getParticipantsFromComments(HashSet<String> participants, List<? extends Comment> comments) {
         for(Comment comment : comments){
-            String user = MapGitHubUser(comment.getUser(), configParams);
+            String user = getGitHubUser(comment.getUser());
             if(StringUtil.isEmptyOrSpaces(user)){
                 continue;
             }
@@ -169,7 +167,7 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
-    private static String MapGitHubUser(User user, Map<String, String> configParams){
+    private static String getGitHubUser(User user){
         if(user == null){
             return null;
         }
@@ -177,17 +175,7 @@ public class BuildService extends BuildServiceAdapter {
         if(StringUtil.isEmptyOrSpaces(login)){
             return null;
         }
-        return MapUser(login, configParams);
-    }
-
-
-    private static String MapUser(String name, Map<String, String> configParams) {
-        String mappedName = configParams.get(PrExtrasConstants.PrefixOfUserMapping + name);
-        if(StringUtil.isEmptyOrSpaces(mappedName)){
-            return name;
-        }else{
-            return mappedName;
-        }
+        return login;
     }
 
     private void FailBuildIfConflict(Map<String, String> runnerParams,
