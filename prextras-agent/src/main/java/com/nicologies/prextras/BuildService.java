@@ -252,7 +252,10 @@ public class BuildService extends BuildServiceAdapter {
             if(StringUtil.isEmptyOrSpaces(password)){
                 password = null;
             }
-            service.getClient().setCredentials(runnerParams.get(SettingsKeys.GithubUserName), password);
+            String user = runnerParams.get(SettingsKeys.GithubUserName);
+            if(StringUtil.isNotEmpty(user)) {
+                service.getClient().setCredentials(user, password);
+            }
         }
     }
 
