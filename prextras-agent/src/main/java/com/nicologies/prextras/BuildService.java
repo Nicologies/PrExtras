@@ -40,9 +40,7 @@ public class BuildService extends BuildServiceAdapter {
 
             String prNum = configParams.get("teamcity.build.branch");
             PullRequest pullRequest = null;
-            boolean isPullRequestBuild = configParams.containsValue("refs/pull/" + prNum + "/merge")
-                    || configParams.containsValue("refs/pull/" + prNum + "/head");
-            isPullRequestBuild &= StringUtil.isNumber(prNum);
+            boolean isPullRequestBuild = StringUtil.isNumber(prNum);
             RepositoryId repo = getRepository(configParams);
             if(isPullRequestBuild){
                 pullRequest = getPullRequest(service, repo, prNum);
