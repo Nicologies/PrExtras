@@ -56,6 +56,15 @@ it will output the follow parameters
 - `teamcity.build.pull_req.is_closed`: indicate if the pull request has been closed or not
 - `teamcity.build.pull_req.labels`: labels of the pull request separated by `;`
 
+## GitHub Enterprise
+
+For github enterprise, you will need to define a system property;therefore this plugin can know where is the API server.
+
+The property name is `system.prextras.github_api_url` and the value should be the API URL of your GitHub Enterprise server, for example: `https://<githubserver.com>/api/v3`. 
+
+By default the plugin will use `https`, if your server doesn't have `https` support, then you need to explicitly prefix the URL with `http`.
+
+
 ## Integrate with other plugins
 
 When using this plugin with [Hedwig](https://github.com/Nicologies/Hedwig) and [User Mapping](https://github.com/Nicologies/usermapping), you will be able to send Slack/HipChat notification of the build failures to the pull request author, assignee, participants and the guy who triggerred the build. 

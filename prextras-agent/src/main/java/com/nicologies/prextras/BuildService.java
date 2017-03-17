@@ -8,20 +8,20 @@ import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.util.StringUtil;
 import org.eclipse.egit.github.core.*;
+import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.GitHubService;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.*;
 
 public class BuildService extends BuildServiceAdapter {
     private boolean _isOnWindows = true;
     private static final String BranchNameParamName = "teamcity.build.pull_req.branch_name";
-    public BuildService() {
-    }
 
     @Override
     public void beforeProcessStarted() throws RunBuildException {
@@ -33,24 +33,27 @@ public class BuildService extends BuildServiceAdapter {
 
         try {
             AgentRunningBuild build = getBuild();
+            String repoUrl = getRepoUrl(configParams);
+            URL githubApiUrl = getGitHubApiUrl();
 
-            PullRequestService service = new PullRequestService();
+            PullRequestService service = new PullRequestService(new GitHubClient(githubApiUrl.getHost(),
+                    githubApiUrl.getPort(), githubApiUrl.getProtocol()));
             initService(service);
             IssueService issueService = new IssueService(service.getClient());
 
             String prNum = configParams.get("teamcity.build.branch");
             PullRequest pullRequest = null;
             boolean isPullRequestBuild = StringUtil.isNumber(prNum);
-            RepositoryId repo = getRepository(configParams);
+            RepositoryId repo = getRepositoryId(repoUrl);
             if(isPullRequestBuild){
                 pullRequest = getPullRequest(service, repo, prNum);
             }
-            build.addSharedConfigParameter("teamcity.build.pull_req.is_pull_req",
+            exportConfigParam(build, "teamcity.build.pull_req.is_pull_req",
                     isPullRequestBuild? "true":"false");
 
             String branchName = getBranchName(pullRequest, prNum);
 
-            build.addSharedConfigParameter(BranchNameParamName, branchName);
+            exportConfigParam(build, BranchNameParamName, branchName);
 
             ExportPullRequestExtraInfo(pullRequest, build, configParams, issueService);
 
@@ -82,53 +85,57 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
+    private void exportConfigParam(AgentRunningBuild build, String key, String value){
+        ParamExporter.exportConfigParam(build, key, value);
+    }
+
     private void ExportPullRequestExtraInfo(PullRequest pullRequest,
                                             AgentRunningBuild build,
                                             Map<String, String> configParams,
                                             IssueService issueService) {
         if(pullRequest == null){
-            build.addSharedConfigParameter("teamcity.build.pull_req.is_merged", "false");
-            build.addSharedConfigParameter("teamcity.build.pull_req.is_closed", "false");
+            exportConfigParam(build, "teamcity.build.pull_req.is_merged", "false");
+            exportConfigParam(build, "teamcity.build.pull_req.is_closed", "false");
             return;
         }
-        build.addSharedConfigParameter("teamcity.build.pull_req.is_merged", pullRequest.isMerged()? "true" : "false");
-        build.addSharedConfigParameter("teamcity.build.pull_req.is_closed",
+        exportConfigParam(build, "teamcity.build.pull_req.is_merged", pullRequest.isMerged()? "true" : "false");
+        exportConfigParam(build, "teamcity.build.pull_req.is_closed",
                 pullRequest.getClosedAt() != null? "true" : "false");
 
         User user = pullRequest.getUser();
         String email = user.getEmail();
         if(!StringUtil.isEmptyOrSpaces(email)) {
-            build.addSharedConfigParameter("teamcity.build.pull_req.author_email", email);
+            exportConfigParam(build, "teamcity.build.pull_req.author_email", email);
         }
 
         String authorName = getGitHubUser(user);
         if(!StringUtil.isEmptyOrSpaces(authorName)){
-            build.addSharedConfigParameter("teamcity.build.pull_req.author", authorName);
+            exportConfigParam(build, "teamcity.build.pull_req.author", authorName);
         }
 
         String htmlUrl = pullRequest.getHtmlUrl();
         if(!StringUtil.isEmptyOrSpaces(htmlUrl)) {
-            build.addSharedConfigParameter("teamcity.build.pull_req.url", htmlUrl);
+            exportConfigParam(build, "teamcity.build.pull_req.url", htmlUrl);
         }
 
         User assignee = pullRequest.getAssignee();
         if(assignee != null){
             String assigneeName = getGitHubUser(assignee);
             if(!StringUtil.isEmptyOrSpaces(assigneeName)) {
-                build.addSharedConfigParameter("teamcity.build.pull_req.assignee", assigneeName);
+                exportConfigParam(build, "teamcity.build.pull_req.assignee", assigneeName);
             }
             email = assignee.getEmail();
             if(!StringUtil.isEmptyOrSpaces(email)) {
-                build.addSharedConfigParameter("teamcity.build.pull_req.assignee_email", email);
+                exportConfigParam(build, "teamcity.build.pull_req.assignee_email", email);
             }
         }
-        RepositoryId repo = getRepository(configParams);
+        RepositoryId repo = getRepositoryId(getRepoUrl(configParams));
         try {
             Issue issue = issueService.getIssue(repo, pullRequest.getNumber());
             List<Label> labels = issue.getLabels();
             if(!labels.isEmpty()) {
                 String labelsString = StringUtil.join(";", labels.toArray());
-                build.addSharedConfigParameter("teamcity.build.pull_req.labels", labelsString);
+                exportConfigParam(build, "teamcity.build.pull_req.labels", labelsString);
             }
         } catch (IOException e) {
             getLogger().message(e.getMessage() + e.getStackTrace());
@@ -140,14 +147,13 @@ public class BuildService extends BuildServiceAdapter {
         try {
             HashSet<String> participants = new HashSet<String>();
             getParticipantsFromComments(participants, service.getComments(repo, prNum));
-            IssueService issueService = new IssueService();
-            initService(issueService);
+            IssueService issueService = new IssueService(service.getClient());
             getParticipantsFromComments(participants, issueService.getComments(repo, prNum));
             if(participants.isEmpty()){
                 return;
             }
 
-            getBuild().addSharedConfigParameter("teamcity.build.pull_req.participants",
+            exportConfigParam(getBuild(), "teamcity.build.pull_req.participants",
                     StringUtil.join(";", participants));
         } catch (IOException e) {
             e.printStackTrace();
@@ -222,9 +228,20 @@ public class BuildService extends BuildServiceAdapter {
         return pr;
     }
 
-    private RepositoryId getRepository(Map<String, String> configParams) {
-        String repoUrl = configParams.get("vcsroot.url");
-        return RepoInfoParser.Parse(repoUrl);
+    private RepositoryId getRepositoryId(String repoUrl) {
+        RepositoryId id = RepoInfoParser.Parse(repoUrl);
+        getLogger().message("owner: " + id.getOwner() + " repo: " + id.getName());
+        return id;
+    }
+
+    private String getRepoUrl(Map<String, String> configParams) {
+        return configParams.get("vcsroot.url");
+    }
+
+    private URL getGitHubApiUrl(){
+        URL url = GitHubApiUrlHelper.INSTANCE.getURL(this.getSystemProperties());
+        getLogger().message("GitHub API URL: " + url.toString());
+        return url;
     }
 
     @NotNull
