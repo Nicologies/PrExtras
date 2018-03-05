@@ -6,6 +6,7 @@ A teamcity plugin to get extra information of the GitHub pull request being buil
 
 ![Image of branch name in build number label](/BranchNameOfPr.png)
 
+- Base branch name
 - Author, assignee, participants who commented on the pull request
 - Pull request URL
 - Labels
@@ -45,6 +46,7 @@ Tick the `Fail the build if the pull request has conflicts` to stop building a p
 it will output the follow parameters
 
 - `teamcity.build.pull_req.branch_name`: the branch name of the pull request or branch being built
+- `teamcity.build.pull_req.base_branch_name`: the base branch name of the pull request or branch being built
 - `teamcity.build.pull_req.is_pull_req`: true if building a pull request, false otherwise.
 - `teamcity.build.pull_req.author_email`: the pull request author's email
 - `teamcity.build.pull_req.author`: the author
