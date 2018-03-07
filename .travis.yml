@@ -3,9 +3,11 @@ jdk:
 - oraclejdk8
 script: mvn package
 deploy:
+  skip_cleanup: true
   provider: releases
   api_key:
     secure: UDffOwG3zuqfX39ZDSO3CMv3RNTL+VR9P5ZcviPgZuKjcmBHkxH2Ct/bltfhUlkp20ou88Rt/pDedPMVysnt5MhE1Kn7eO3hp6nXsq9ovDxe2fd3aEwBa2dLneFPZoz15T+RjHLe420g9CmjLMKj1tEihNm0O4udmcx8lPltrxoa011oXgWtjcsyqOSS4cmMA4KAtbgOtZUrg7wnyKawQbl+f87BHWqDZ7+IIZfKnjg9qtVUp8zMyi4OUI9He6Oxc15+c3mBA9NJkgEKKy28FQLVkTACyu1aHxAElOWWx3An1pB76c06YB+3AddqGI99WWggeIIylxAveHs4uOSmAc7UIFs0JOafXaFbc1e5in4dPRbQofmN2QPk9/KcVLBUYWX4gfedkyDoR4G6ms0lF3CBb5U98y5f1ApMEwod6zkyunY+SlrZaQmqELulpG6qoO9puNAmLgn5IZqGci/1kNeim8V5ADAuDc9fM2bjzPzCpP7Pi9w1Q7pcsmN1MgrI1jkWGZlVwkDFvAJ/8VJSPRqSILRW7nd0cVIgr+JmiDRO8W4mGMNvmlo8gMiDaq5izJ1zhauv8VrPcezGallNnPsZm1LqAgy+/+L58/iHxIKE8lIyDxpF1S0lsKDc261OpBABa2CQn2XRppu//v5lRyNs8ANwQFdwyUSq3ZHKFWg=
-  file: target/prextras.zip
+  file: ./target/prextras.zip
   on:
-    tags
+    tags: true
+    all_branches: true
