@@ -21,7 +21,8 @@ import java.util.*;
 
 public class BuildService extends BuildServiceAdapter {
     private boolean _isOnWindows = true;
-    private static final String BranchNameParamName = "teamcity.build.pull_req.branch_name";
+    private static final String HeadBranchNameParamName = "teamcity.build.pull_req.branch_name";
+    private static final String BaseBranchNameParamName = "teamcity.build.pull_req.base_branch_name";
 
     @Override
     public void beforeProcessStarted() throws RunBuildException {
@@ -51,9 +52,13 @@ public class BuildService extends BuildServiceAdapter {
             exportConfigParam(build, "teamcity.build.pull_req.is_pull_req",
                     isPullRequestBuild? "true":"false");
 
-            String branchName = getBranchName(pullRequest, prNum);
+            String headBranchName = getHeadBranchName(pullRequest, prNum);
 
-            exportConfigParam(build, BranchNameParamName, branchName);
+            exportConfigParam(build, HeadBranchNameParamName, headBranchName);
+
+            String baseBranchName = getBaseBranchName(pullRequest, prNum);
+
+            exportConfigParam(build, BaseBranchNameParamName, baseBranchName);
 
             ExportPullRequestExtraInfo(pullRequest, build, configParams, issueService);
 
@@ -67,9 +72,9 @@ public class BuildService extends BuildServiceAdapter {
                 String buildNum = getConfigParameters().get("build.number");
                 boolean isGitVersionBuildNum = buildNum.matches("(?i).*PullRequest\\.\\d*\\+.*");
                 if(isGitVersionBuildNum){
-                    buildNum = buildNum.replaceAll("(?i)PullRequest\\.\\d*", branchName);
-                }else if(!buildNum.contains(branchName)){
-                    buildNum = buildNum + "-" + branchName;
+                    buildNum = buildNum.replaceAll("(?i)PullRequest\\.\\d*", headBranchName);
+                }else if(!buildNum.contains(headBranchName)){
+                    buildNum = buildNum + "-" + headBranchName;
                 }
                 buildNum = buildNum.replaceAll("(?i)PullRequest", "PR");
                 String param = "##teamcity[buildNumber " + "'" + buildNum + "']";
@@ -197,14 +202,25 @@ public class BuildService extends BuildServiceAdapter {
         }
     }
 
-    private String getBranchName(PullRequest pr, String prNum) throws RunBuildException{
+    private String getHeadBranchName(PullRequest pr, String prNum) throws RunBuildException{
         if(!StringUtil.isNumber(prNum)) {
             return prNum;
         }
         try {
             return pr != null? pr.getHead().getRef(): prNum;
         }catch (Exception ex){
-            throw new RunBuildException("Unable to get branch name for pull request " + ex.getMessage(), ex);
+            throw new RunBuildException("Unable to get head branch name for pull request " + ex.getMessage(), ex);
+        }
+    }
+
+    private String getBaseBranchName(PullRequest pr, String prNum) throws RunBuildException{
+        if(!StringUtil.isNumber(prNum)) {
+            return prNum;
+        }
+        try {
+            return pr != null? pr.getBase().getRef(): prNum;
+        }catch (Exception ex){
+            throw new RunBuildException("Unable to get base branch name for pull request " + ex.getMessage(), ex);
         }
     }
 
@@ -295,7 +311,7 @@ public class BuildService extends BuildServiceAdapter {
                     ret.add("/c");
                 }
                 ret.add("echo");
-                ret.add("Branch name is " + getConfigParameters().get(BranchNameParamName));
+                ret.add("Branch name is " + getConfigParameters().get(HeadBranchNameParamName));
                 return ret;
             }
 
