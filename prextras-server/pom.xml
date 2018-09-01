@@ -6,7 +6,7 @@
   <parent>
     <artifactId>prextras</artifactId>
     <groupId>com.nicologies.prextras</groupId>
-    <version>1.0.9</version>
+    <version>1.0.11</version>
   </parent>
   <artifactId>prextras-server</artifactId>
   <packaging>jar</packaging>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.nicologies.prextras</groupId>
       <artifactId>prextras-common</artifactId>
-      <version>1.0.9</version>
+      <version>1.0.11</version>
     </dependency>
   </dependencies>
 </project>
