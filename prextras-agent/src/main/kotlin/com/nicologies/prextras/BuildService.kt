@@ -296,6 +296,8 @@ class BuildService : BuildServiceAdapter() {
                 val ret = Vector<String>()
                 if (_isOnWindows) {
                     ret.add("/c")
+                } else {
+                    ret.add("-c")
                 }
                 ret.add("echo")
                 ret.add("Branch name is " + configParameters[HeadBranchNameParamName])
