@@ -46,10 +46,10 @@ class BuildService : BuildServiceAdapter() {
             initService(service)
             val issueService = IssueService(service.client)
 
-            val prNum = configParams["teamcity.build.branch"]!!
-            var pullRequest: PullRequest? = null
-            val isPullRequestBuild = StringUtil.isNumber(prNum)
+            val teamcityBuildBranch = configParams["teamcity.build.branch"]!!
+            val (prNum, isPullRequestBuild) = PrNumParser.parse(teamcityBuildBranch)
             val repo = getRepositoryId(repoUrl)
+            var pullRequest: PullRequest? = null
             if (isPullRequestBuild) {
                 pullRequest = getPullRequest(service, repo, prNum)
             }
@@ -64,7 +64,7 @@ class BuildService : BuildServiceAdapter() {
 
             exportConfigParam(build, BaseBranchNameParamName, baseBranchName)
 
-            ExportPullRequestExtraInfo(pullRequest, build, configParams, issueService)
+            exportPullRequestExtraInfo(pullRequest, build, configParams, issueService)
 
             if (pullRequest != null && pullRequest.comments > 0) {
                 exportPrParticipants(service, repo, pullRequest.number)
@@ -97,7 +97,7 @@ class BuildService : BuildServiceAdapter() {
         ParamExporter.exportConfigParam(build, key, value)
     }
 
-    private fun ExportPullRequestExtraInfo(pullRequest: PullRequest?,
+    private fun exportPullRequestExtraInfo(pullRequest: PullRequest?,
                                            build: AgentRunningBuild,
                                            configParams: Map<String, String>,
                                            issueService: IssueService) {

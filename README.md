@@ -72,7 +72,3 @@ By default the plugin will use `https`, if your server doesn't have `https` supp
 ## Integrate with other plugins
 
 When using this plugin with [Hedwig](https://github.com/Nicologies/Hedwig) and [User Mapping](https://github.com/Nicologies/usermapping), you will be able to send Slack/HipChat notification of the build failures to the pull request author, assignee, participants and the guy who triggerred the build. 
-
-## Known Issue
-
-It won't work if your branch is named numeric.
