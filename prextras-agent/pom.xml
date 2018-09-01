@@ -6,7 +6,7 @@
   <parent>
     <artifactId>prextras</artifactId>
     <groupId>com.nicologies.prextras</groupId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
   </parent>
   <artifactId>prextras-agent</artifactId>
   <packaging>jar</packaging>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.nicologies.prextras</groupId>
       <artifactId>prextras-common</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.13</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.eclipse.mylyn.github/org.eclipse.egit.github.core -->
     <dependency>

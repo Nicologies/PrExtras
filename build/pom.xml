@@ -4,7 +4,7 @@
   <parent>
     <artifactId>prextras</artifactId>
     <groupId>com.nicologies.prextras</groupId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
@@ -15,7 +15,7 @@
       <dependency>
            <groupId>com.nicologies.prextras</groupId>
            <artifactId>prextras-server</artifactId>
-           <version>1.0.12</version>
+           <version>1.0.13</version>
       </dependency>
   </dependencies>
   <build>
