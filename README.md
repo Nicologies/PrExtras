@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Nicologies/PrExtras.svg?branch=master)](https://travis-ci.org/Nicologies/PrExtras)
+
 # PrExtras
 
 A teamcity plugin to get extra information of the GitHub pull request being built. Such as the 
