@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
   <properties>
     <teamcity-version>9.0.3</teamcity-version>
-    <kotlin.version>1.1.1</kotlin.version>
+    <kotlin.version>1.2.60</kotlin.version>
   </properties>
 
   <dependencies>
