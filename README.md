@@ -49,7 +49,8 @@ it will output the follow parameters
 
 - `teamcity.build.pull_req.branch_name`: the branch name of the pull request or branch being built
 - `teamcity.build.pull_req.base_branch_name`: the base branch name of the pull request or branch being built
-- `teamcity.build.pull_req.is_pull_req`: true if building a pull request, false otherwise.
+- `teamcity.build.pull_req.is_pull_req`: true if building a pull request, false otherwise
+- `teamcity.build.pull_req.number`: the pull request number if it's a pull request
 - `teamcity.build.pull_req.author_email`: the pull request author's email
 - `teamcity.build.pull_req.author`: the author
 - `teamcity.build.pull_req.url`: the pull request url, e.g. https://github.com/owner/repo/pull/123

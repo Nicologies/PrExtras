@@ -56,6 +56,8 @@ class BuildService : BuildServiceAdapter() {
             exportConfigParam(build, "teamcity.build.pull_req.is_pull_req",
                     if (isPullRequestBuild) "true" else "false")
 
+            exportConfigParam(build, "teamcity.build.pull_req.number", prNum)
+
             val headBranchName = getHeadBranchName(pullRequest, prNum)
 
             exportConfigParam(build, HeadBranchNameParamName, headBranchName)
