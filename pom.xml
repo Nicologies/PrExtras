@@ -4,12 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nicologies.prextras</groupId>
   <artifactId>prextras</artifactId>
-  <version>${prextras.version}</version>
+  <version>1.0.9</version>
   <packaging>pom</packaging>
   <properties>
     <teamcity-version>9.0.3</teamcity-version>
     <kotlin.version>1.1.1</kotlin.version>
-    <prextras.version>1.0.10</prextras.version>
   </properties>
 
   <dependencies>

@@ -15,9 +15,9 @@
     <parent>
         <artifactId>prextras</artifactId>
         <groupId>com.nicologies.prextras</groupId>
-        <version>${prextras.version}</version>
+        <version>1.0.9</version>
     </parent>
     <groupId>com.nicologies.prextras</groupId>
     <artifactId>prextras-common</artifactId>
-    <version>${prextras.version}</version>
+    <version>1.0.9</version>
 </project>
