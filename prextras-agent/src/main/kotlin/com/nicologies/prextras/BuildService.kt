@@ -190,7 +190,7 @@ class BuildService : BuildServiceAdapter() {
 
         if (!StringUtil.isEmptyOrSpaces(failBuildIfConflict) && failBuildIfConflict.equals("true", ignoreCase = true)) {
             if (!pr.isMerged && !pr.isMergeable) {
-                val msg = "The pull request has conflicts " + pr.htmlUrl
+                val msg = "${pr.htmlUrl} is not merge-able. Possible reasons: 1.Merge conflicts, 2.Closed already, 3.The server is calculating the merge commit, 3.Server is not available."
                 throw RunBuildException(msg)
             }
         }
