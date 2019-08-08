@@ -1,4 +1,7 @@
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/Nicologies/PrExtras/latest/total.svg?maxAge=86400)](https://github.com/PrExtras/PrExtras/releases/latest)
+
 [![Build Status](https://travis-ci.org/Nicologies/PrExtras.svg?branch=master)](https://travis-ci.org/Nicologies/PrExtras)
+
 
 # PrExtras
 
